@@ -1,26 +1,29 @@
-import library_constants as C
 import time
 import difflib
 import os
 import re
 
-IO_RECORDING_FILE = C.TEST_DATA_DIR + "my_io_recorded"
+if "PYTEST_VERSION" in os.environ:
+    MESSAGE_FLASH_TIME: Final = 0
+    PYTEST_RUNNING:     Final = True
+    STEP_DELAY = 0
+else:
+    MESSAGE_FLASH_TIME: Final = 2
+    PYTEST_RUNNING:     Final = False
+    STEP_DELAY = 0.1
 
+UPDATE:                 Final = ("U","u","Update","update")
+
+## Directories and files
+MY_IO_DIR:              Final = "./" #"/Users/talvio/Nextcloud/projects/my_io/"
+TEST_DATA_DIR:          Final = MY_IO_DIR + "test_data/"
+IO_RECORDING_FILE = TEST_DATA_DIR + "my_io_recorded"
+DIFF_FILE_EXTENSION = ".diff"
+
+## Default behaviour when imported
 RUN_RECORDED_SESSION = True
 RECORD_ADDITIONAL_IO = False
 RERECORD_OUTPUT = False
-
-DIFF_FILE_EXTENSION = ".diff"
-#THIS_IS_A_TEST = False
-
-#my_input_fifo = []
-#my_observed_output = [""]
-#my_recorded_output = [""]
-
-if C.PYTEST_RUNNING:
-    STEP_DELAY = 0
-else:
-    STEP_DELAY = 0.1
 
 
 """ InputOutputAndTest captures all print and input commands. 
@@ -132,7 +135,7 @@ class InputOutputAndTest:
                 if diff[:2] != "  ":
             #       print("Line: " + diff, end="")
                     difference_to_show += diff
-            if C.PYTEST_RUNNING:
+            if PYTEST_RUNNING:
                 raise RuntimeError(f"Output does not match recorded output!\nDIFFERENCE:\n{difference_to_show}\nRECORDED:\n{latest_recorded_output}\nOBSERVED:\n{self.my_observed_output[-2]}<-")
             else:
                 with open(self.diff_file, 'a') as f:
@@ -147,7 +150,7 @@ class InputOutputAndTest:
                     time.sleep(STEP_DELAY)
                 f.close
                 what_next = input("Press ENTER to continue | (U)pdate recorded output to observed | Q + Enter to exit! ") or False
-                if what_next in C.UPDATE:
+                if what_next in UPDATE:
                     self.update_recording(self.input_count, recorded_input, self.my_observed_output[-2])
                 elif what_next == False:
                     exit()
