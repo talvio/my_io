@@ -45,8 +45,9 @@ RERECORD_OUTPUT = False
     The recording file format is simple. Every input starts with I: Every following output line starts with O: and is a reaction 
     to the previous input up to the next input line, starting with I: again. 
 """
-class InputOutputAndTest:
 
+
+class InputOutputAndTest:
     def __init__(self, io_recording_file = IO_RECORDING_FILE, run_recorded = RUN_RECORDED_SESSION, record_additional_io = RECORD_ADDITIONAL_IO, rerecord_output = RERECORD_OUTPUT):
         self.io_recording_file = io_recording_file
         self.run_recorded = run_recorded
@@ -89,8 +90,7 @@ class InputOutputAndTest:
                     self.my_recorded_output[-1] += line_no_eol[2:] + "\n"
                 else:
                     raise RuntimeError("Recorded IO file is corrupted!")
-                line = f.readline()       
-        f.close
+                line = f.readline()
         
     def restart_recording_file(self):
         with open(self.io_recording_file, 'w') as f:
